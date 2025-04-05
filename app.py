@@ -80,6 +80,13 @@ def inicializar_sistema():
         from pages.registro import mostrar_pagina_registro
         from pages.granulometria import mostrar_pagina_granulometria
         from pages.consulta import mostrar_pagina_consulta
+        from pages.densidad_arido import mostrar_pagina_densidad_arido
+        from pages.limites import mostrar_pagina_limites
+        from pages.cbr import mostrar_pagina_cbr
+        from pages.lajas_agujas import mostrar_pagina_lajas_agujas
+        from pages.picnometro import mostrar_pagina_picnometro
+        from pages.equivalente_arena import mostrar_pagina_equivalente_arena
+        from pages.proctor import mostrar_pagina_proctor
         
         return {
             "inicializado": True,
@@ -87,7 +94,14 @@ def inicializar_sistema():
                 "inicio": mostrar_pagina_inicio,
                 "registro": mostrar_pagina_registro,
                 "granulometria": mostrar_pagina_granulometria,
-                "consulta": mostrar_pagina_consulta
+                "consulta": mostrar_pagina_consulta,
+                "densidad_arido": mostrar_pagina_densidad_arido,
+                "limites": mostrar_pagina_limites,
+                "cbr": mostrar_pagina_cbr,
+                "lajas_agujas": mostrar_pagina_lajas_agujas,
+                "picnometro": mostrar_pagina_picnometro,
+                "equivalente_arena": mostrar_pagina_equivalente_arena,
+                "proctor": mostrar_pagina_proctor
             }
         }
     except Exception as e:
@@ -197,7 +211,16 @@ def main():
     opciones_principales = ["Inicio", "Registro de Muestras", "Ensayos", "Consulta de Resultados"]
 
     # Opciones del submenú de ensayos
-    opciones_ensayos = ["Ensayos Granulométricos", "Equivalente de Arena", "Límites", "Otros Ensayos"]
+    opciones_ensayos = [
+        "Ensayos Granulométricos", 
+        "Límites de Atterberg", 
+        "Densidad de Árido Grueso", 
+        "CBR",
+        "Índice de Lajas y Agujas",
+        "Picnómetro de Arena",
+        "Equivalente de Arena",
+        "Próctor"
+    ]
 
     # Barra lateral
     with st.sidebar:
@@ -275,17 +298,28 @@ def main():
                 sistema["modulos"]["inicio"]()
             elif pagina_actual == "Registro de Muestras":
                 sistema["modulos"]["registro"]()
-            elif pagina_actual == "Ensayos Granulométricos" or pagina_actual == "Ensayos Granulométricos":
-                sistema["modulos"]["granulometria"]()
             elif pagina_actual == "Consulta de Resultados":
                 sistema["modulos"]["consulta"]()
             elif pagina_actual in opciones_ensayos:
-                # Aquí podrías manejar las distintas subpáginas de ensayos
+                # Manejar los distintos tipos de ensayos
                 if pagina_actual == "Ensayos Granulométricos":
                     sistema["modulos"]["granulometria"]()
+                elif pagina_actual == "Límites de Atterberg":
+                    sistema["modulos"]["limites"]()
+                elif pagina_actual == "Densidad de Árido Grueso":
+                    sistema["modulos"]["densidad_arido"]()
+                elif pagina_actual == "CBR":
+                    sistema["modulos"]["cbr"]()
+                elif pagina_actual == "Índice de Lajas y Agujas":
+                    sistema["modulos"]["lajas_agujas"]()
+                elif pagina_actual == "Picnómetro de Arena":
+                    sistema["modulos"]["picnometro"]()
+                elif pagina_actual == "Equivalente de Arena":
+                    sistema["modulos"]["equivalente_arena"]()
+                elif pagina_actual == "Próctor":
+                    sistema["modulos"]["proctor"]()
                 else:
-                    st.title(pagina_actual)
-                    st.info(f"Funcionalidad de {pagina_actual} en desarrollo")
+                    st.error(f"Página de ensayo no implementada: {pagina_actual}")
             else:
                 st.error(f"Página no encontrada: {pagina_actual}")
         except Exception as e:

@@ -103,7 +103,7 @@ def inicializar_tablas(conn):
     )
     ''')
     
-    # Crear tabla para otros tipos de ensayos (por ejemplo, límites de Atterberg)
+    # Crear tabla para ensayos de límites de Atterberg
     c.execute('''
     CREATE TABLE IF NOT EXISTS ensayos_limites (
         ensayo_id INTEGER PRIMARY KEY,
@@ -114,16 +114,99 @@ def inicializar_tablas(conn):
     )
     ''')
     
-    # Crear tabla para ensayos de densidad
+    # Crear tabla para ensayos de densidad de árido grueso
     c.execute('''
-    CREATE TABLE IF NOT EXISTS ensayos_densidad (
+    CREATE TABLE IF NOT EXISTS ensayos_densidad_arido (
         ensayo_id INTEGER PRIMARY KEY,
-        densidad_seca REAL,
-        densidad_humeda REAL,
-        humedad REAL,
-        volumen REAL,
-        masa REAL,
+        densidad_aparente REAL,
+        densidad_tras_secado REAL,
+        densidad_sss REAL, /* Saturada con superficie seca */
+        absorcion_agua REAL,
+        masa_sumergida REAL,
+        masa_sss REAL,
+        masa_seca REAL,
         FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para ensayos CBR
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS ensayos_cbr (
+        ensayo_id INTEGER PRIMARY KEY,
+        energia_compactacion REAL,
+        densidad_seca REAL,
+        humedad_inicial REAL,
+        humedad_final REAL,
+        hinchamiento REAL,
+        indice_cbr REAL,
+        absorcion_agua REAL,
+        dias_inmersion INTEGER,
+        sobrecarga REAL,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para ensayos de índice de lajas y agujas
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS ensayos_lajas_agujas (
+        ensayo_id INTEGER PRIMARY KEY,
+        indice_lajas REAL,
+        indice_agujas REAL,
+        masa_total REAL,
+        masa_lajas REAL,
+        masa_agujas REAL,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para ensayos de picnómetro de arena
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS ensayos_picnometro (
+        ensayo_id INTEGER PRIMARY KEY,
+        densidad_aparente REAL,
+        volumen_hoyo REAL,
+        masa_arena_empleada REAL,
+        masa_arena_cono REAL,
+        densidad_arena REAL,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para ensayos de equivalente de arena
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS ensayos_equivalente_arena (
+        ensayo_id INTEGER PRIMARY KEY,
+        altura_sedimento REAL,
+        altura_floculos REAL,
+        equivalente_arena REAL,
+        temperatura REAL,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para ensayos Próctor
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS ensayos_proctor (
+        ensayo_id INTEGER PRIMARY KEY,
+        tipo_proctor TEXT,
+        densidad_maxima REAL,
+        humedad_optima REAL,
+        energia_compactacion REAL,
+        numero_capas INTEGER,
+        golpes_capa INTEGER,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos (id) ON DELETE CASCADE
+    )
+    ''')
+    
+    # Crear tabla para los puntos de la curva Próctor
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS puntos_proctor (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ensayo_id INTEGER,
+        humedad REAL,
+        densidad_seca REAL,
+        numero_punto INTEGER,
+        FOREIGN KEY (ensayo_id) REFERENCES ensayos_proctor (ensayo_id) ON DELETE CASCADE
     )
     ''')
     

@@ -22,7 +22,7 @@ def mostrar_pagina_consulta():
             st.warning("No hay muestras registradas en el sistema.")
             if st.button("Ir a Registro de Muestras"):
                 st.session_state.pagina_actual = "Registro de Muestras"
-                st.experimental_rerun()
+                st.rerun()
             return
         
         # Convertir a DataFrame para facilitar el filtrado
@@ -309,7 +309,7 @@ def mostrar_pagina_consulta():
                             if st.button("Realizar Ensayo Granulométrico", key=f"btn_ensayo_{codigo}"):
                                 st.session_state.realizar_ensayo = codigo
                                 st.session_state.pagina_actual = "Ensayos Granulométricos"
-                                st.experimental_rerun()
+                                st.rerun()
                 else:
                     st.error(f"No se pudo cargar la información de la muestra {codigo}.")
     

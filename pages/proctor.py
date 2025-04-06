@@ -24,7 +24,7 @@ def mostrar_pagina_proctor():
             st.warning("No hay muestras registradas. Por favor registre una muestra primero.")
             if st.button("Ir a Registro de Muestras"):
                 st.session_state.pagina_actual = "Registro de Muestras"
-                st.experimental_rerun()
+                st.rerun()
             return
         
         codigos_muestras = [m["codigo_muestra"] for m in muestras]
@@ -70,11 +70,11 @@ def mostrar_pagina_proctor():
                 with col1:
                     if st.button("Ver Ensayo Existente", use_container_width=True):
                         st.session_state.mostrar_resultados = codigo_seleccionado
-                        st.experimental_rerun()
+                        st.rerun()
                 with col2:
                     if st.button("Nuevo Ensayo", use_container_width=True):
                         st.session_state.mostrar_formulario = True
-                        st.experimental_rerun()
+                        st.rerun()
             else:
                 st.session_state.mostrar_formulario = True
             
@@ -252,7 +252,7 @@ def mostrar_pagina_proctor():
                                         # Establecer flag para mostrar resultados
                                         st.session_state.mostrar_resultados = codigo_seleccionado
                                         st.session_state.mostrar_formulario = False
-                                        st.experimental_rerun()
+                                        st.rerun()
                                 
                                 except Exception as e:
                                     st.error(f"Error al ajustar la curva Próctor: {str(e)}")
@@ -418,7 +418,7 @@ def mostrar_pagina_proctor():
                             if "mostrar_resultados" in st.session_state:
                                 del st.session_state.mostrar_resultados
                             st.session_state.mostrar_formulario = True
-                            st.experimental_rerun()
+                            st.rerun()
                 else:
                     st.error("No se pudo cargar la información del ensayo.")
         else:

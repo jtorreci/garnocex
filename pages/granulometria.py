@@ -22,7 +22,7 @@ def mostrar_pagina_granulometria():
             st.warning("No hay muestras registradas. Por favor registre una muestra primero.")
             if st.button("Ir a Registro de Muestras"):
                 st.session_state.pagina_actual = "Registro de Muestras"
-                st.experimental_rerun()
+                st.rerun()
             return
         
         codigos_muestras = [m["codigo_muestra"] for m in muestras]
@@ -130,7 +130,7 @@ def mostrar_pagina_granulometria():
                         
                         # Establecer flag para mostrar resultados
                         st.session_state.mostrar_resultados = codigo_seleccionado
-                        st.experimental_rerun()
+                        st.rerun()
                     except Exception as e:
                         st.error(f"Error al guardar el ensayo: {str(e)}")
             

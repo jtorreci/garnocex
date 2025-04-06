@@ -121,18 +121,18 @@ def mostrar_pagina_registro():
                         if st.button("Realizar Ensayo Granulométrico", use_container_width=True):
                             st.session_state.realizar_ensayo = codigo
                             st.session_state.pagina_actual = "Ensayos Granulométricos"
-                            st.experimental_rerun()
+                            st.rerun()
                     
                     with col2:
                         # Botón para registrar nueva muestra
                         if st.button("Registrar Otra Muestra", use_container_width=True):
                             # Limpiar el estado para permitir un nuevo registro
                             del st.session_state.mostrar_muestra
-                            st.experimental_rerun()
+                            st.rerun()
                 else:
                     st.error(f"No se pudo recuperar la información de la muestra {codigo}.")
                     if st.button("Intentar de nuevo"):
-                        st.experimental_rerun()
+                        st.rerun()
             except Exception as e:
                 st.error(f"Error al mostrar la muestra: {str(e)}")
                 st.code(traceback.format_exc())

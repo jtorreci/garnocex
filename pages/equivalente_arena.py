@@ -312,6 +312,4 @@ def mostrar_pagina_equivalente_arena():
     
     except Exception as e:
         st.error(f"Ha ocurrido un error: {str(e)}")
-        st.exception(e)_ensayo
-            # Eliminar para evitar que persista en futuras navegaciones
-            del st.session_state.realizar
+        st.exception(e)

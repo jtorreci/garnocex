@@ -108,14 +108,14 @@ def mostrar_pagina_inicio():
     with col1:
         if st.button("Registrar Nueva Muestra", use_container_width=True):
             st.session_state.pagina_actual = "Registro de Muestras"
-            st.experimental_rerun()
+            st.rerun()
     
     with col2:
         if st.button("Realizar Ensayo", use_container_width=True):
             st.session_state.pagina_actual = "Ensayos Granulométricos"
-            st.experimental_rerun()
+            st.rerun()
     
     with col3:
         if st.button("Consultar Resultados", use_container_width=True):
             st.session_state.pagina_actual = "Consulta de Resultados"
-            st.experimental_rerun()
+            st.rerun()

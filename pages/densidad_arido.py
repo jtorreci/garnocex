@@ -23,7 +23,7 @@ def mostrar_pagina_densidad_arido():
             st.warning("No hay muestras registradas. Por favor registre una muestra primero.")
             if st.button("Ir a Registro de Muestras"):
                 st.session_state.pagina_actual = "Registro de Muestras"
-                st.experimental_rerun()
+                st.rerun()
             return
         
         codigos_muestras = [m["codigo_muestra"] for m in muestras]
@@ -67,7 +67,7 @@ def mostrar_pagina_densidad_arido():
                 st.info("Esta muestra ya tiene un ensayo de densidad de árido grueso registrado. Puede visualizarlo o registrar uno nuevo.")
                 if st.button("Ver Ensayo Existente"):
                     st.session_state.mostrar_resultados = codigo_seleccionado
-                    st.experimental_rerun()
+                    st.rerun()
             
             # Formulario de ensayo
             with st.form("formulario_densidad_arido"):
@@ -151,7 +151,7 @@ def mostrar_pagina_densidad_arido():
                             
                             # Establecer flag para mostrar resultados
                             st.session_state.mostrar_resultados = codigo_seleccionado
-                            st.experimental_rerun()
+                            st.rerun()
                             
                     except ValueError as e:
                         st.error(f"Error en los cálculos: {str(e)}")
@@ -290,7 +290,7 @@ def mostrar_pagina_densidad_arido():
                             # Limpiar el estado para permitir un nuevo registro
                             if "mostrar_resultados" in st.session_state:
                                 del st.session_state.mostrar_resultados
-                            st.experimental_rerun()
+                            st.rerun()
                 else:
                     st.error("No se pudo cargar la información del ensayo.")
         else:

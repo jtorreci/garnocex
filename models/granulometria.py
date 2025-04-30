@@ -28,15 +28,22 @@ def guardar_ensayo_granulometrico(codigo_muestra, fecha_ensayo, operario, masa_t
         # Iniciar transacción
         conn.execute("BEGIN")
         
-        # Insertar datos del ensayo
+        # Insertar datos en la tabla genérica de ensayos
+        c.execute("""
+        INSERT INTO ensayos 
+        (codigo_muestra, tipo_ensayo, fecha_ensayo, operario, notas)
+        VALUES (?, ?, ?, ?, ?)
+        """, (codigo_muestra, "granulometrico", fecha_ensayo, operario, None))
+        
+        # Obtener el ID del ensayo insertado en la tabla genérica
+        ensayo_id = c.lastrowid
+        
+        # Insertar datos específicos del ensayo granulométrico
         c.execute("""
         INSERT INTO ensayos_granulometricos 
-        (codigo_muestra, fecha_ensayo, operario, masa_total, d10, d30, d60, coef_uniformidad, coef_curvatura)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (codigo_muestra, fecha_ensayo, operario, masa_total, d10, d30, d60, cu, cc))
-        
-        # Obtener el ID del ensayo insertado
-        ensayo_id = c.lastrowid
+        (ensayo_id, masa_total, d10, d30, d60, coef_uniformidad, coef_curvatura)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (ensayo_id, masa_total, d10, d30, d60, cu, cc))
         
         # Insertar datos de los tamices
         for dato in datos_tamices:
@@ -84,11 +91,25 @@ def obtener_ensayo_granulometrico(codigo_muestra):
     conn = obtener_conexion()
     c = conn.cursor()
     
-    # Obtener ensayo
+    # Realizar un JOIN para obtener datos del ensayo granulométrico junto con el código de muestra
     c.execute("""
-    SELECT * FROM ensayos_granulometricos 
-    WHERE codigo_muestra = ? 
-    ORDER BY id DESC LIMIT 1
+    SELECT 
+        eg.ensayo_id,
+        e.codigo_muestra,
+        e.fecha_ensayo,
+        e.operario,
+        e.notas,
+        eg.masa_total,
+        eg.d10,
+        eg.d30,
+        eg.d60,
+        eg.coef_uniformidad,
+        eg.coef_curvatura
+    FROM ensayos_granulometricos eg
+    JOIN ensayos e ON eg.ensayo_id = e.id
+    WHERE e.codigo_muestra = ?
+    ORDER BY e.fecha_ensayo DESC
+    LIMIT 1
     """, (codigo_muestra,))
     
     ensayo = c.fetchone()
@@ -100,12 +121,12 @@ def obtener_ensayo_granulometrico(codigo_muestra):
     # Convertir a diccionario
     ensayo_dict = dict(ensayo)
     
-    # Obtener datos de tamices
+    # Obtener datos de tamices relacionados con el ensayo
     c.execute("""
     SELECT * FROM datos_tamices 
     WHERE ensayo_id = ? 
     ORDER BY apertura DESC
-    """, (ensayo['id'],))
+    """, (ensayo['ensayo_id'],))
     
     tamices = [dict(row) for row in c.fetchall()]
     ensayo_dict['tamices'] = tamices
@@ -115,31 +136,55 @@ def obtener_ensayo_granulometrico(codigo_muestra):
 
 def obtener_todos_ensayos_granulometricos(codigo_muestra=None):
     """
-    Obtiene todos los ensayos granulométricos, opcionalmente filtrados por muestra
+    Obtiene todos los ensayos granulométricos, opcionalmente filtrados por muestra.
     
     Args:
-        codigo_muestra (str, optional): Código de la muestra para filtrar
+        codigo_muestra (str, optional): Código de la muestra para filtrar.
         
     Returns:
-        list: Lista de ensayos granulométricos
+        list: Lista de ensayos granulométricos con información adicional.
     """
     conn = obtener_conexion()
     c = conn.cursor()
     
     if codigo_muestra:
+        # Filtrar por código de muestra
         c.execute("""
-        SELECT eg.*, m.codigo_muestra 
+        SELECT 
+            eg.ensayo_id,
+            e.codigo_muestra,
+            e.fecha_ensayo,
+            e.operario,
+            e.notas,
+            eg.masa_total,
+            eg.d10,
+            eg.d30,
+            eg.d60,
+            eg.coef_uniformidad,
+            eg.coef_curvatura
         FROM ensayos_granulometricos eg
-        JOIN muestras m ON eg.codigo_muestra = m.codigo_muestra
-        WHERE eg.codigo_muestra = ?
-        ORDER BY eg.fecha_ensayo DESC
+        JOIN ensayos e ON eg.ensayo_id = e.id
+        WHERE e.codigo_muestra = ?
+        ORDER BY e.fecha_ensayo DESC
         """, (codigo_muestra,))
     else:
+        # Obtener todos los ensayos sin filtrar
         c.execute("""
-        SELECT eg.*, m.codigo_muestra 
+        SELECT 
+            eg.ensayo_id,
+            e.codigo_muestra,
+            e.fecha_ensayo,
+            e.operario,
+            e.notas,
+            eg.masa_total,
+            eg.d10,
+            eg.d30,
+            eg.d60,
+            eg.coef_uniformidad,
+            eg.coef_curvatura
         FROM ensayos_granulometricos eg
-        JOIN muestras m ON eg.codigo_muestra = m.codigo_muestra
-        ORDER BY eg.fecha_ensayo DESC
+        JOIN ensayos e ON eg.ensayo_id = e.id
+        ORDER BY e.fecha_ensayo DESC
         """)
     
     ensayos = [dict(row) for row in c.fetchall()]
